@@ -40,11 +40,11 @@ void setup() {
   //lcd.init();
   lcd.backlight();
   
-  Serial.begin(9600);
+//  Serial.begin(9600);
 
   stepperX.setMaxSpeed(1000);
-  stepperZ.setMaxSpeed(1000);
-  stepperPump.setMaxSpeed(1000);
+  //stepperZ.setMaxSpeed(1000);
+  //stepperPump.setMaxSpeed(1000);
 
   upButton.setDebounceTime(50);
   downButton.setDebounceTime(50);
@@ -170,12 +170,12 @@ void calibrateX() {
   lcd.print("Zeroing X axis");
 
   bool isStopped = false;
-  Serial.println("start x calibration");
+
   while(!isStopped)
   {
     limitXLow.loop();
     // Set the speed in steps per second:
-    stepperX.setSpeed(100);
+    stepperX.setSpeed(-100);
     // Step the motor with a constant speed as set by setSpeed():
     stepperX.runSpeed();
 
@@ -190,7 +190,6 @@ void calibrateX() {
   
   lcd.clear();
   lcd.print("X axis calibrated");
-  Serial.println("end x calibrated");
   delay(1500);
 }
 
@@ -199,37 +198,46 @@ void calibrateX() {
 void setXStop() {
   lcd.clear();
   lcd.print("Set X stop position");
+  delay(1000);
 
   bool isSet = false;
+  int targetPos = 0;
 
-  while(!isSet)
-  {
-    rightButton.loop();
-    leftButton.loop();
-    selectButton.loop();
-    
-    if (rightButton.isPressed())
+  while(!isSet) {
+    int right = rightButton.getStateRaw();
+    int left = leftButton.getStateRaw();
+    int select = selectButton.getStateRaw();
+
+    if (right == 0)
     {
-      stepperX.moveTo(stepperX.currentPosition()+100);
-      stepperX.runToPosition();
+      targetPos += 10;
+      while(stepperX.currentPosition() != targetPos)
+      {
+        stepperX.setSpeed(200);
+        stepperX.runSpeed();
+      }
     }
 
-    if (leftButton.isPressed())
+    if (left == 0)
     {
-      stepperX.moveTo(stepperX.currentPosition()-100);
-      stepperX.runToPosition();
+      targetPos = stepperX.currentPosition() - 10;
+      while(stepperX.currentPosition() != targetPos)
+      {
+        stepperX.setSpeed(-200);
+        stepperX.runSpeed();
+      }
     }
-    if (selectButton.isPressed())
+    if (select == 0)
     {
       isSet = true;
     }
   }
 
-  // Set current position to new 0
-  xEndPos = stepperX.currentPosition();//(stepperX.currentPosition());
+  xEndPos = stepperX.currentPosition();
 
   lcd.clear();
-  lcd.print("X end position sest");
+  lcd.print("X end position set to");
+  lcd.print(xEndPos);
 
   delay(1500);
 }
@@ -241,31 +249,39 @@ void setZHeight() {
   lcd.print("Set Z height");
 
   bool isSet = false;
+  int targetPos = 0;
 
-  while(!isSet)
-  {
-    rightButton.loop();
-    leftButton.loop();
-    selectButton.loop();
-    
-    if (rightButton.isPressed())
+  while(!isSet) {
+    int right = rightButton.getStateRaw();
+    int left = leftButton.getStateRaw();
+    int select = selectButton.getStateRaw();
+
+    if (right == 0)
     {
-      stepperZ.moveTo(stepperZ.currentPosition()+100);
-      stepperZ.runToPosition();
+      targetPos += 10;
+      while(stepperZ.currentPosition() != targetPos)
+      {
+        stepperZ.setSpeed(200);
+        stepperZ.runSpeed();
+      }
     }
 
-    if (leftButton.isPressed())
+    if (left == 0)
     {
-      stepperZ.moveTo(stepperZ.currentPosition()-100);
-      stepperZ.runToPosition();
+      targetPos = stepperZ.currentPosition() - 10;
+      while(stepperZ.currentPosition() != targetPos)
+      {
+        stepperZ.setSpeed(-200);
+        stepperZ.runSpeed();
+      }
     }
-    if (selectButton.isPressed())
+    if (select == 0)
     {
       isSet = true;
     }
   }
 
-  stepperZ.setCurrentPosition(0);//=(stepperZ.currentPosition());
+  stepperZ.setCurrentPosition(0);
 
   lcd.clear();
   lcd.print("Z height set");
@@ -278,6 +294,7 @@ void setZHeight() {
 void setXSpeed() {
 
   bool isSet = false;
+  int xSpeedRef = 99;
 
   while(!isSet)
   {
@@ -285,10 +302,14 @@ void setXSpeed() {
     leftButton.loop();
     selectButton.loop();
 
-    lcd.clear();
-    lcd.print("Set X speed");
-    lcd.setCursor(0, 1);
-    lcd.print(xSpeed);
+    if (xSpeedRef != xSpeed) // update lcd only if value has changed
+    {
+      lcd.clear();
+      lcd.print("Set X speed");
+      lcd.setCursor(0, 1);
+      lcd.print(xSpeed);
+      xSpeedRef = xSpeed;
+    }
 
     if (rightButton.isPressed())
     {
@@ -318,6 +339,7 @@ void setXSpeed() {
 void setPumpSpeed() {
 
   bool isSet = false;
+  int pumpSpeedRef = 99;
 
   while(!isSet)
   {
@@ -325,10 +347,14 @@ void setPumpSpeed() {
     leftButton.loop();
     selectButton.loop();
 
-    lcd.clear();
-    lcd.print("Set pump speed");
-    lcd.setCursor(0, 1);
-    lcd.print(pumpSpeed);
+    if (pumpSpeedRef != pumpSpeed) // update lcd only if value has changed
+    {
+      lcd.clear();
+      lcd.print("Set pump speed");
+      lcd.setCursor(0, 1);
+      lcd.print(pumpSpeed);
+      pumpSpeedRef = pumpSpeed;
+    }
 
     if (rightButton.isPressed())
     {
@@ -345,7 +371,6 @@ void setPumpSpeed() {
     }
   }
 
-
   lcd.clear();
   lcd.print("Pump speed set to");
   lcd.setCursor(0, 1);
@@ -361,25 +386,33 @@ void primePump() {
   lcd.print("Prime pump");
 
   bool isSet = false;
+  int targetPos = 0;
 
-  while(!isSet)
-  {
-    rightButton.loop();
-    leftButton.loop();
-    selectButton.loop();
+  while(!isSet) {
+    int right = rightButton.getStateRaw();
+    int left = leftButton.getStateRaw();
+    int select = selectButton.getStateRaw();
 
-    if (rightButton.isPressed())
+    if (right == 0)
     {
-      stepperPump.moveTo(stepperPump.currentPosition()+100);
-      stepperPump.runToPosition();
+      targetPos += 10;
+      while(stepperPump.currentPosition() != targetPos)
+      {
+        stepperPump.setSpeed(200);
+        stepperPump.runSpeed();
+      }
     }
 
-    if (leftButton.isPressed())
+    if (left == 0)
     {
-      stepperPump.moveTo(stepperPump.currentPosition()-100);
-      stepperPump.runToPosition();
+      targetPos = stepperPump.currentPosition() - 10;
+      while(stepperPump.currentPosition() != targetPos)
+      {
+        stepperPump.setSpeed(-200);
+        stepperPump.runSpeed();
+      }
     }
-    if (selectButton.isPressed())
+    if (select == 0)
     {
       isSet = true;
     }
@@ -396,19 +429,27 @@ void primePump() {
 void startCoat() {
 
   bool isFinished = false;
-
-  stepperX.moveTo(0);
-  stepperZ.moveTo(0);
-  stepperX.runToPosition();
-  stepperZ.runToPosition();
+  int progressRef = 99;
+  int progress = 0;
+//  stepperX.moveTo(0);
+//  stepperZ.moveTo(0);
+//  stepperX.runToPosition();
+//  stepperZ.runToPosition();
+  limitXHigh.loop();
 
   while((stepperX.currentPosition() < xEndPos) && (!limitXHigh.isPressed()))
   {
-    limitXHigh.loop();
-    lcd.clear();
-    lcd.print("Coating progress");
-    lcd.setCursor(0, 1);
-    lcd.print( (stepperX.currentPosition()) / xEndPos);
+    
+    
+
+    if (progressRef != progress)
+    {
+      lcd.clear();
+      lcd.print("Coating progress");
+      lcd.setCursor(0, 1);
+      progress = ((stepperX.currentPosition()) / xEndPos);
+      lcd.print(progress);
+    }
 
     stepperX.setSpeed(xSpeed);
     stepperPump.setSpeed(pumpSpeed);
@@ -418,8 +459,6 @@ void startCoat() {
 
   lcd.clear();
   lcd.print("Coating done");
-  lcd.setCursor(0, 1);
-  lcd.print(pumpSpeed);
 
   delay(1500);
 }
