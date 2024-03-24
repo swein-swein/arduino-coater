@@ -68,17 +68,17 @@ void loop() {
   if (down == 0){
     menu++;
     updateMenu();
-    delay(100);
+    delay(300);
   }
   if (up == 0){
     menu--;
     updateMenu();
-    delay(100);
+    delay(300);
   }
   if (select == 0){
     executeAction();
     updateMenu();
-    delay(100);
+    delay(300);
   }
 }
 
