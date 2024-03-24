@@ -1,31 +1,33 @@
 // Include the AccelStepper library:
 #include "AccelStepper.h"
 #include "ezButton.h"
-#include "LiquidCrystal.h"
+//#include "LiquidCrystal.h"
+#include "LiquidCrystal_I2C.h"
 
-#define XdirPin 2
-#define XstepPin 3
-#define ZdirPin 4
-#define ZstepPin 5
-#define pumpDirPin 6
-#define pumpStepPin 7
+#define XdirPin 1
+#define XstepPin 2
+#define ZdirPin 3
+#define ZstepPin 4
+#define pumpDirPin 5
+#define pumpStepPin 6
 #define motorInterfaceType 1
 
-const int rs = 8, en = 9, d4 = 10, d5 = 11, d6 = 12, d7 = 13;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+//const int rs = 8, en = 9, d4 = 10, d5 = 11, d6 = 12, d7 = 13;
+//LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+LiquidCrystal_I2C lcd(0x27,  16, 2);
 
 int menu = 1;
 int xEndPos = 0;
 int xSpeed = 0;
 int pumpSpeed = 0;
 
-ezButton upButton(A0);
-ezButton downButton(A1);
-ezButton leftButton(A2);
-ezButton rightButton(A3);
-ezButton selectButton(1);
-ezButton limitXLow(A4);
-ezButton limitXHigh(A5);
+ezButton upButton(7);
+ezButton downButton(8);
+ezButton leftButton(9);
+ezButton rightButton(10);
+ezButton selectButton(11);
+ezButton limitXLow(12);
+ezButton limitXHigh(13);
 
 AccelStepper stepperX = AccelStepper(motorInterfaceType, XstepPin, XdirPin);
 AccelStepper stepperZ = AccelStepper(motorInterfaceType, ZstepPin, ZdirPin);
@@ -35,7 +37,8 @@ AccelStepper stepperPump = AccelStepper(motorInterfaceType, pumpStepPin, pumpDir
 
 void setup() {
   lcd.begin(16,2);
-  //lcd.backlight();
+  //lcd.init();
+  lcd.backlight();
   
   Serial.begin(9600);
 
