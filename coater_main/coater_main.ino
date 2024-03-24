@@ -140,7 +140,6 @@ void updateMenu() {
 void executeAction() {
   switch (menu) {
     case 1:
-      Serial.println("case 1 has been selected");
       calibrateX();
       break;
     case 2:
