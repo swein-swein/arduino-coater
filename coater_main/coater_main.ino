@@ -61,30 +61,24 @@ void setup() {
 
 void loop() {
 
-  downButton.loop();
-  upButton.loop();
-  selectButton.loop();
+  int down = downButton.getStateRaw();
+  int up = upButton.getStateRaw();
+  int select = selectButton.getStateRaw();
 
-  if (downButton.isPressed()){
-    Serial.println("down pressed");
+  if (down == 0){
     menu++;
     updateMenu();
     delay(100);
-//    while (downButton.isPressed());
   }
-  if (upButton.isPressed()){
-    Serial.println("up pressed");
+  if (up == 0){
     menu--;
     updateMenu();
     delay(100);
-//    while(!digitalRead(upButton));
   }
-  if (selectButton.isPressed()){
-    Serial.println("select pressed");
+  if (select == 0){
     executeAction();
     updateMenu();
     delay(100);
-//    while (!digitalRead(selectButton));
   }
 }
 
@@ -198,7 +192,7 @@ void calibrateX() {
   lcd.clear();
   lcd.print("X axis calibrated");
   Serial.println("end x calibrated");
-  //delay(1500);
+  delay(1500);
 }
 
 ///////////////////////////////////////////////////
