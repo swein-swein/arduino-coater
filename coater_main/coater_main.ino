@@ -16,6 +16,7 @@ int menu = 1;
 int xEndPos = 0;
 int xSpeed = 0;
 int pumpSpeed = 0;
+int pumpEnd = 100;
 
 ezButton upButton(7);
 ezButton downButton(8);
@@ -112,20 +113,28 @@ void updateMenu() {
       lcd.clear();
       lcd.print(">Set pump speed");
       lcd.setCursor(0, 1);
-      lcd.print(" Prime pump");
+      lcd.print(" Set pump end");
       break;
     case 6:
       lcd.clear();
       lcd.print(" Set pump speed");
       lcd.setCursor(0, 1);
-      lcd.print(">Prime pump");
+      lcd.print(">Set pump end");
       break;
     case 7:
       lcd.clear();
-      lcd.print(">Start coating");
+      lcd.print(">Prime pump");
+      lcd.setCursor(0, 1);
+      lcd.print(" Start coating");
       break;
     case 8:
-      menu = 7;
+      lcd.clear();
+      lcd.print("Prime pump");
+      lcd.setCursor(0, 1);
+      lcd.print(">Start coating");
+      break;
+    case 9:
+      menu = 8;
       break;
   }
 }
@@ -150,9 +159,12 @@ void executeAction() {
       setPumpSpeed();
       break;
     case 6:
-      primePump();
+      setPumpEnd();
       break;
     case 7:
+      primePump();
+      break;
+    case 8:
       startCoat();
       break;
   }
@@ -461,6 +473,71 @@ void setPumpSpeed() {
 
 ///////////////////////////////////////////////////
 
+void setPumpEnd() {
+
+  bool isSet = false;
+  int pumpEndRef = 99;
+  delay(1000);
+
+  while(!isSet)
+  {
+    int right = rightButton.getStateRaw();
+    int left = leftButton.getStateRaw();
+    int up = upButton.getStateRaw();
+    int down = downButton.getStateRaw();
+    int select = selectButton.getStateRaw();
+
+    if (pumpEndRef != pumpEnd) // update lcd only if value has changed
+    {
+      lcd.clear();
+      lcd.print("Set pump end percentage");
+      lcd.setCursor(0, 1);
+      lcd.print(pumpEnd);
+      lcd.print("%")
+      pumpEndRef = pumpEnd;
+    }
+
+    if (right == 0)
+    {
+      pumpEnd++;
+      delay(100);
+    }
+
+    if (left == 0)
+    {
+      pumpEnd--;
+      delay(100);
+    }
+
+    if (up == 0)
+    {
+      pumpEnd+=10;
+      delay(100);
+    }
+
+    if (down == 0)
+    {
+      pumpEnd-=10;
+      delay(100);
+    }
+
+    if (select == 0)
+    {
+      isSet = true;
+    }
+  }
+
+  lcd.clear();
+  lcd.print("Pump will at stop");
+  lcd.setCursor(0, 1);
+  lcd.print(pumpEnd);
+  lcd.print("%")
+
+  delay(1500);
+}
+
+///////////////////////////////////////////////////
+
 void primePump() {
   lcd.clear();
   lcd.print("Prime pump");
@@ -557,9 +634,13 @@ void startCoat() {
     }
 
     stepperX.setSpeed(xSpeed);
-    stepperPump.setSpeed(pumpSpeed);
     stepperX.runSpeed();
-    stepperPump.runSpeed();
+
+    while (pumpEnd <= progress)
+    {    
+      stepperPump.setSpeed(pumpSpeed);
+      stepperPump.runSpeed();
+    }
   }
 
   lcd.clear();
