@@ -170,7 +170,7 @@ void calibrateX() {
   {
     limitXLow.loop();
     // Set the speed in steps per second:
-    stepperX.setSpeed(-100);
+    stepperX.setSpeed(-300);
     // Step the motor with a constant speed as set by setSpeed():
     stepperX.runSpeed();
 
@@ -201,6 +201,8 @@ void setXStop() {
   while(!isSet) {
     int right = rightButton.getStateRaw();
     int left = leftButton.getStateRaw();
+    int up = upButton.getStateRaw();
+    int down = downButton.getStateRaw();
     int select = selectButton.getStateRaw();
 
     if (right == 0)
@@ -222,6 +224,27 @@ void setXStop() {
         stepperX.runSpeed();
       }
     }
+
+    if (up == 0)
+    {
+      targetPos = stepperX.currentPosition() + 10;
+      while(stepperX.currentPosition() != targetPos)
+      {
+        stepperX.setSpeed(600);
+        stepperX.runSpeed();
+      }
+    }
+
+    if (down == 0)
+    {
+      targetPos = stepperX.currentPosition() - 10;
+      while(stepperX.currentPosition() != targetPos)
+      {
+        stepperX.setSpeed(-600);
+        stepperX.runSpeed();
+      }
+    }
+
     if (select == 0)
     {
       isSet = true;
@@ -249,11 +272,13 @@ void setZHeight() {
   while(!isSet) {
     int right = rightButton.getStateRaw();
     int left = leftButton.getStateRaw();
+    int up = upButton.getStateRaw();
+    int down = downButton.getStateRaw();
     int select = selectButton.getStateRaw();
 
     if (right == 0)
     {
-      targetPos = stepperZ.currentPosition() + 100;
+      targetPos = stepperZ.currentPosition() + 10;
       while(stepperZ.currentPosition() != targetPos)
       {
         stepperZ.setSpeed(200);
@@ -263,13 +288,34 @@ void setZHeight() {
 
     if (left == 0)
     {
-      targetPos = stepperZ.currentPosition() - 100;
+      targetPos = stepperZ.currentPosition() - 10;
       while(stepperZ.currentPosition() != targetPos)
       {
         stepperZ.setSpeed(-200);
         stepperZ.runSpeed();
       }
     }
+
+    if (up == 0)
+    {
+      targetPos = stepperZ.currentPosition() + 10;
+      while(stepperZ.currentPosition() != targetPos)
+      {
+        stepperZ.setSpeed(600);
+        stepperZ.runSpeed();
+      }
+    }
+
+    if (down == 0)
+    {
+      targetPos = stepperZ.currentPosition() - 10;
+      while(stepperZ.currentPosition() != targetPos)
+      {
+        stepperZ.setSpeed(-600);
+        stepperZ.runSpeed();
+      }
+    }
+
     if (select == 0)
     {
       isSet = true;
@@ -299,6 +345,8 @@ void setXSpeed() {
   {
     int right = rightButton.getStateRaw();
     int left = leftButton.getStateRaw();
+    int up = upButton.getStateRaw();
+    int down = downButton.getStateRaw();
     int select = selectButton.getStateRaw();
 
     if (xSpeedRef != xSpeed) // update lcd only if value has changed
@@ -321,6 +369,19 @@ void setXSpeed() {
       xSpeed--;
       delay(100);
     }
+
+    if (up == 0)
+    {
+      xSpeed+=10;
+      delay(100);
+    }
+
+    if (down == 0)
+    {
+      xSpeed-=10;
+      delay(100);
+    }
+
     if (select == 0)
     {
       isSet = true;
@@ -347,6 +408,8 @@ void setPumpSpeed() {
   {
     int right = rightButton.getStateRaw();
     int left = leftButton.getStateRaw();
+    int up = upButton.getStateRaw();
+    int down = downButton.getStateRaw();
     int select = selectButton.getStateRaw();
 
     if (pumpSpeedRef != pumpSpeed) // update lcd only if value has changed
@@ -369,6 +432,19 @@ void setPumpSpeed() {
       pumpSpeed--;
       delay(100);
     }
+
+    if (up == 0)
+    {
+      pumpSpeed+=10;
+      delay(100);
+    }
+
+    if (down == 0)
+    {
+      pumpSpeed-=10;
+      delay(100);
+    }
+
     if (select == 0)
     {
       isSet = true;
@@ -396,6 +472,8 @@ void primePump() {
   while(!isSet) {
     int right = rightButton.getStateRaw();
     int left = leftButton.getStateRaw();
+    int up = upButton.getStateRaw();
+    int down = downButton.getStateRaw();
     int select = selectButton.getStateRaw();
 
     if (right == 0)
@@ -417,6 +495,27 @@ void primePump() {
         stepperPump.runSpeed();
       }
     }
+
+    if (up == 0)
+    {
+      targetPos = stepperPump.currentPosition() + 10;
+      while(stepperPump.currentPosition() != targetPos)
+      {
+        stepperPump.setSpeed(600);
+        stepperPump.runSpeed();
+      }
+    }
+
+    if (down == 0)
+    {
+      targetPos = stepperPump.currentPosition() - 10;
+      while(stepperPump.currentPosition() != targetPos)
+      {
+        stepperPump.setSpeed(-600);
+        stepperPump.runSpeed();
+      }
+    }
+
     if (select == 0)
     {
       isSet = true;
