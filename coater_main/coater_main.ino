@@ -610,7 +610,7 @@ void primePump() {
 void startCoat() {
 
   bool isFinished = false;
-  double progressRef = 99;
+  double progressRef = 101;
   double progress = 0;
   double endPos = xEndPos;
   //stepperX.moveTo(0);
