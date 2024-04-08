@@ -473,7 +473,8 @@ void setPumpSpeed() {
 
 ///////////////////////////////////////////////////
 
-void setPumpEnd() {
+void setPumpEnd()
+{
 
   bool isSet = false;
   int pumpEndRef = 99;
@@ -493,7 +494,7 @@ void setPumpEnd() {
       lcd.print("Set pump end percentage");
       lcd.setCursor(0, 1);
       lcd.print(pumpEnd);
-      lcd.print("%")
+      lcd.print("%");
       pumpEndRef = pumpEnd;
     }
 
@@ -531,7 +532,7 @@ void setPumpEnd() {
   lcd.print("Pump will at stop");
   lcd.setCursor(0, 1);
   lcd.print(pumpEnd);
-  lcd.print("%")
+  lcd.print("%");
 
   delay(1500);
 }
@@ -636,7 +637,7 @@ void startCoat() {
     stepperX.setSpeed(xSpeed);
     stepperX.runSpeed();
 
-    while (pumpEnd <= progress)
+    if (pumpEnd >= progress)
     {    
       stepperPump.setSpeed(pumpSpeed);
       stepperPump.runSpeed();
